@@ -47,6 +47,38 @@ button{font:inherit;color:inherit}.hidden{display:none!important}
 
 /* Карты — кнопки (доступность) */
 button.card{appearance:none;-webkit-appearance:none;font:inherit;text-align:inherit;margin:0}
+
+/* ── Телефоны (≤480px): арена колонкой, компактный бой ── */
+@media(max-width:480px){
+  .topbar{height:50px;padding:0 8px}
+  .battle-top{padding:0 8px}
+  .battle-top .btn{padding:4px 8px;font-size:calc(11px*var(--fs,1))}
+  .battle-top>div:nth-child(2){overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .arena{grid-template-columns:1fr;align-items:center;padding:8px;min-height:0;overflow-y:auto}
+  .party{gap:2px}
+  .health{width:104px}
+  .sprite{width:64px;height:96px}
+  .enemy-side .sprite{width:88px;height:126px}
+  .intent{align-self:center;margin:8px 0}
+  .intent-box{padding:6px 10px;font-size:calc(11px*var(--fs,1))}
+  .hand-zone{height:204px;grid-template-columns:70px 1fr 82px;padding:6px}
+  .hand{height:170px;padding-top:12px}
+  .card{width:108px;flex-basis:108px;height:158px}
+  .card-art{height:46px}
+  .energy{width:46px;height:46px;font:900 calc(20px*var(--fs,1)) Georgia}
+  .active-player{font-size:calc(12px*var(--fs,1))}
+  .map-panel{padding:14px}
+  .modal{padding:16px}
+  .modal h2{font-size:calc(22px*var(--fs,1))}
+  .choice{min-width:0;width:100%}
+  .room-code{font-size:calc(34px*var(--fs,1));padding:12px}
+  #menu{padding:22px 14px}
+}
+
+/* Динамическая высота вьюпорта (iOS/Android адресная строка) */
+@supports(height:100dvh){
+  .screen{min-height:calc(100dvh - 58px)}
+}
 </style>
 </head>
 <body><div id="app">
