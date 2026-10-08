@@ -1,0 +1,83 @@
+const CARD_DB={
+ strike:{name:'Удар',cost:1,type:'attack',icon:'⚔️',text:'Наносит 7 урона.',dmg:7},
+ guard:{name:'Страж',cost:1,type:'skill',icon:'🛡️',text:'Даёт 6 брони активному герою.',block:6},
+ twin:{name:'Парный выпад',cost:1,type:'attack',icon:'⚔️',text:'5 урона. +4, если союзник уже играл карту.',dmg:5,combo:4},
+ cover:{name:'Прикрытие',cost:1,type:'skill',icon:'🤝',text:'Оба героя получают 4 брони.',allBlock:4},
+ heavy:{name:'Раскол',cost:2,type:'attack',icon:'💥',text:'Наносит 15 урона.',dmg:15},
+ rally:{name:'Боевой клич',cost:0,type:'skill',icon:'🔥',text:'Следующая атака наносит +4 урона.',strength:4},
+ mend:{name:'Перевязка',cost:1,type:'skill',icon:'🩹',text:'Лечит более раненого героя на 5.',heal:5},
+ spark:{name:'Искра',cost:1,type:'attack',icon:'✨',text:'Наносит 5 урона. Возьмите карту.',dmg:5,draw:1},
+ fortify:{name:'Бастион',cost:2,type:'skill',icon:'🏰',text:'Оба героя получают 8 брони.',allBlock:8},
+ bleed:{name:'Рваная рана',cost:1,type:'attack',icon:'🩸',text:'6 урона. Враг теряет ещё 3 в конце раунда.',dmg:6,bleed:3},
+ focus:{name:'Общий замысел',cost:1,type:'power',icon:'◈',text:'Оба героя получают +1 энергию в следующем раунде.',nextEnergy:1},
+ sacrifice:{name:'Кровавый обмен',cost:0,type:'attack',icon:'🗡️',text:'Получите 3 урона. Нанесите 10.',selfDmg:3,dmg:10}
+};
+const REWARDS=['heavy','rally','mend','spark','fortify','bleed','focus','sacrifice','twin','cover'];
+const CLASS_CARDS={1:[],2:[],3:[]};
+function addClassCards(kind,prefix,defs){defs.forEach((d,i)=>{let id=prefix+String(i+1).padStart(2,'0');CARD_DB[id]=Object.assign({rarity:'common',class:kind,artSeed:kind*100+i+1,tags:[]},d);CLASS_CARDS[kind].push(id)})}
+addClassCards(1,'r',[
+{name:'Проверочный выпад',cost:1,type:'attack',dmg:7,tags:['быстрая','оружие'],text:'7 урона. Если сыграна после навыка — +1 Резонанс.'},
+{name:'Поднять щит',cost:1,type:'skill',block:8,tags:['защита'],text:'Получить 8 брони.'},
+{name:'Перехват',cost:1,type:'skill',block:6,protect:true,tags:['защита','реакция'],text:'6 брони. Следующая атака по союзнику перенаправляется на Роуэна.'},
+{name:'Удар щитом',cost:1,type:'attack',blockStrike:.7,tags:['защита','оружие'],text:'Нанести урон, равный 70% текущей брони.'},
+{name:'Багровый разрез',cost:1,type:'attack',dmg:5,bleed:4,tags:['кровь','оружие'],text:'5 урона и 4 кровотечения.',rarity:'uncommon'},
+{name:'Кровавый договор',cost:0,type:'skill',selfDmg:4,strength:3,tags:['кровь','ритуал'],text:'Потерять 4 ОЗ. Получить 3 силы.',rarity:'uncommon'},
+{name:'Приговор',cost:2,type:'attack',dmg:10,bleedExecute:2,tags:['кровь','тяжёлая'],text:'10 урона. Удвоить урон, если у врага 8+ кровотечения.',rarity:'rare'},
+{name:'Широкий замах',cost:2,type:'attack',dmg:7,hits:2,tags:['тяжёлая','оружие'],text:'Нанести 7 урона дважды.'},
+{name:'Готовность к ответу',cost:1,type:'skill',block:5,thorns:5,tags:['реакция','защита'],text:'5 брони и 5 шипов до конца боя.'},
+{name:'Крепость',cost:2,type:'skill',allBlock:10,tags:['защита','тяжёлая'],text:'Весь отряд получает 10 брони.',rarity:'rare'},
+{name:'Натиск',cost:1,type:'attack',dmg:9,move:'front',tags:['движение','оружие'],text:'Перейти вперёд и нанести 9 урона.'},
+{name:'Шаг назад',cost:0,type:'skill',block:4,draw:1,move:'back',tags:['движение','быстрая'],text:'Перейти назад, получить 4 брони и взять карту.'},
+{name:'Вызов',cost:0,type:'skill',taunt:true,block:4,tags:['защита','реакция'],text:'Следующая атака врага направлена в Роуэна. 4 брони.'},
+{name:'Сбить подготовку',cost:2,type:'attack',dmg:6,delay:1,tags:['контроль','оружие'],text:'6 урона. Отложить намерение врага на один ход.',rarity:'rare'},
+{name:'Заточить клинок',cost:1,type:'power',nextAttack:6,tags:['оружие','подготовка'],text:'Следующая атака наносит +6 урона.'},
+{name:'Последний рубеж',cost:1,type:'skill',lowHpBlock:18,block:5,tags:['кровь','защита'],text:'5 брони. При здоровье ниже 50% — ещё 18.',rarity:'rare'},
+{name:'Раскол брони',cost:1,type:'attack',dmg:8,vuln:1,tags:['тяжёлая','контроль'],text:'8 урона и Уязвимость.'},
+{name:'Продолжить серию',cost:0,type:'attack',dmg:3,comboScale:3,tags:['быстрая','оружие'],text:'3 урона, +3 за каждую ранее сыгранную атаку в этом ходу.'},
+{name:'Знамя отряда',cost:1,type:'power',gainRes:3,tags:['командная','подготовка'],text:'Получить 3 Резонанса.',rarity:'rare'},
+{name:'Последний аргумент',cost:3,type:'attack',dmg:22,nextDoubleHeavy:true,tags:['легендарная','тяжёлая'],text:'22 урона. Следующая тяжёлая атака применяется дважды.',rarity:'legendary',exhaust:true}
+]);
+addClassCards(2,'m',[
+{name:'Ядовитая искра',cost:1,type:'attack',dmg:4,poison:3,tags:['яд','заклинание'],text:'4 урона и 3 яда.'},
+{name:'Лунный покров',cost:1,type:'skill',block:7,tags:['оберег'],text:'Получить 7 брони.'},
+{name:'Целебный знак',cost:1,type:'skill',heal:6,tags:['лечение','оберег'],text:'Восстановить 6 ОЗ.'},
+{name:'Быстрая мысль',cost:0,type:'skill',draw:1,tags:['быстрая','знание'],text:'Взять карту.'},
+{name:'Разъедающий шёпот',cost:1,type:'attack',poison:5,weak:1,tags:['яд','проклятие'],text:'5 яда и Слабость.',rarity:'uncommon'},
+{name:'Лунная петля',cost:1,type:'skill',block:5,draw:1,tags:['оберег','знание'],text:'5 брони и взять карту.'},
+{name:'Вытянуть болезнь',cost:1,type:'skill',poisonBurst:.5,heal:4,tags:['яд','лечение'],text:'Активировать половину яда и восстановить 4 ОЗ.',rarity:'rare'},
+{name:'Слово остановки',cost:2,type:'skill',delay:1,block:6,tags:['контроль','заклинание'],text:'Отложить намерение врага. Получить 6 брони.',rarity:'rare'},
+{name:'Зеркальный оберег',cost:1,type:'skill',allBlock:6,reflectSpell:true,tags:['оберег','реакция'],text:'Отряд получает 6 брони. Следующий негативный статус отражается.'},
+{name:'Чистая кровь',cost:1,type:'skill',cleanse:true,heal:3,tags:['лечение'],text:'Снять негативные эффекты и восстановить 3 ОЗ.'},
+{name:'Шаг сквозь тень',cost:0,type:'skill',move:'back',draw:1,tags:['движение','быстрая'],text:'Перейти назад и взять карту.'},
+{name:'Гравитационный толчок',cost:1,type:'attack',dmg:7,moveEnemy:'back',tags:['движение','контроль'],text:'7 урона. Нарушить стойку врага.'},
+{name:'Предвидение',cost:1,type:'skill',draw:2,discard:1,tags:['знание'],text:'Взять 2 карты, затем сбросить самую дорогую.'},
+{name:'Украденный миг',cost:2,type:'power',stealIntent:true,tags:['контроль','знание'],text:'Отменить текущее намерение врага и получить 1 энергию.',rarity:'rare'},
+{name:'Благословение луны',cost:1,type:'power',bless:true,tags:['благословение','оберег'],text:'В этом бою лечение и броня сильнее на 2.',rarity:'rare'},
+{name:'Печать истощения',cost:1,type:'attack',dmg:5,weak:2,tags:['проклятие','заклинание'],text:'5 урона и 2 Слабости.'},
+{name:'Переписать судьбу',cost:1,type:'skill',recycle:true,tags:['знание'],text:'Вернуть последнюю карту из сброса в руку.',rarity:'uncommon'},
+{name:'Каскад звёзд',cost:2,type:'attack',dmg:4,hits:3,tags:['заклинание','тяжёлая'],text:'Нанести 4 урона трижды.'},
+{name:'Общий сон',cost:1,type:'power',gainRes:2,nextEnergy:1,tags:['командная','благословение'],text:'2 Резонанса. В следующем раунде отряд получает энергию.'},
+{name:'Разорванная причинность',cost:2,type:'power',emptyRefill:true,tags:['легендарная','знание'],text:'Первый раз за раунд при пустой руке взять 4 карты.',rarity:'legendary',exhaust:true}
+]);
+addClassCards(3,'v',[
+{name:'Поднять скелета',cost:1,type:'skill',summon:1,minionPower:3,tags:['призыв','кость'],text:'Призвать скелета силой 3.'},
+{name:'Костяной заслон',cost:1,type:'skill',block:6,summon:1,tags:['призыв','защита'],text:'6 брони и призвать слабого слугу.'},
+{name:'Когти мертвеца',cost:1,type:'attack',dmg:5,bleed:3,tags:['слуги','кровь'],text:'5 урона и 3 кровотечения.'},
+{name:'Шёпот могил',cost:0,type:'skill',draw:1,tags:['дух','быстрая'],text:'Взять карту. Если есть слуга — +1 Резонанс.'},
+{name:'Вороний дух',cost:1,type:'skill',summon:1,minionPower:5,temporaryMinion:true,tags:['дух','призыв'],text:'Призвать временного духа силой 5.',rarity:'uncommon'},
+{name:'Поглотить слабого',cost:0,type:'skill',sacrificeMinion:true,energyGain:1,tags:['жертва'],text:'Пожертвовать слугой, получить энергию и нанести урон.'},
+{name:'Мёртвый марш',cost:2,type:'power',summon:2,minionBuff:1,tags:['призыв','легион'],text:'Призвать двух слуг и усилить всех на 1.',rarity:'rare'},
+{name:'Роковая метка',cost:1,type:'attack',doom:7,tags:['рок','проклятие'],text:'Наложить 7 Рока.'},
+{name:'Душа-щит',cost:1,type:'skill',allBlock:5,sacrificeOptional:true,tags:['дух','защита'],text:'Отряд получает 5 брони. Можно пожертвовать слугой и удвоить эффект.'},
+{name:'Собрать останки',cost:1,type:'skill',recycleSummon:true,tags:['кость','знание'],text:'Вернуть карту призыва из сброса.'},
+{name:'Приказать атаковать',cost:1,type:'attack',command:true,tags:['слуги','командная'],text:'Все слуги атакуют немедленно.'},
+{name:'Привязать душу',cost:1,type:'skill',protectByMinion:true,tags:['дух','реакция'],text:'Следующий урон по герою принимает слуга.'},
+{name:'Чумной фамильяр',cost:1,type:'skill',summon:1,minionPower:3,minionPoison:2,tags:['призыв','яд'],text:'Призвать фамильяра, атаки которого накладывают яд.'},
+{name:'Великая жертва',cost:1,type:'attack',sacrificeAll:true,tags:['жертва','тяжёлая'],text:'Пожертвовать всех слуг. Каждый наносит 7 урона.',rarity:'rare'},
+{name:'Единый аватар',cost:2,type:'power',avatar:true,tags:['аватар','призыв'],text:'Объединить всех слуг в одного аватара.',rarity:'rare'},
+{name:'Изумрудное пламя',cost:1,type:'attack',dmg:6,poison:3,doom:3,tags:['рок','яд'],text:'6 урона, 3 яда и 3 Рока.'},
+{name:'Открыть могилы',cost:2,type:'skill',summon:3,tags:['легион','призыв'],text:'Призвать трёх слабых слуг.',rarity:'rare'},
+{name:'Договор с бездной',cost:0,type:'power',selfDmg:6,minionBuff:3,tags:['ритуал','слуги'],text:'Потерять 6 ОЗ. Все слуги получают +3 силы.'},
+{name:'Хор бесплотных',cost:1,type:'power',gainRes:3,tags:['командная','дух'],text:'Получить 3 Резонанса. Следующая карта союзника повторяется.',rarity:'rare'},
+{name:'Армия без имён',cost:3,type:'power',summon:5,noArmor:true,tags:['легендарная','легион'],text:'Призвать 5 слуг. До конца боя Вейра не может получать броню.',rarity:'legendary',exhaust:true}
+]);

@@ -1,0 +1,29 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Пепельный Шпиль — кооперативный карточный рогалик</title>
+<link rel="stylesheet" href="styles/main.css">
+</head>
+<body><div id="app">
+<header class="topbar"><div class="brand"><i class="brandmark"></i> ПЕПЕЛЬНЫЙ ШПИЛЬ</div><div id="netBadge" class="net-badge"><i class="net-dot"></i><span>не в сети</span></div><div class="resources"><span>Этаж <b id="floorUI">—</b></span><span>Золото <b id="goldUI">—</b></span><span>Реликвия <b id="relicUI">Нет</b></span></div><button class="settings-toggle" onclick="showGlossary()" title="Справочник">?</button><button class="settings-toggle" onclick="openSettings()" title="Настройки">⚙</button></header>
+<section id="menu" class="screen">
+ <div class="menu-wrap"><div><div class="eyebrow">карточный рогалик · соло и кооператив</div><h1 class="title">ПЕПЕЛЬНЫЙ <span>ШПИЛЬ</span></h1><p class="lead">Выберите одинокого узника или поднимайтесь вдвоём. Собирайте колоду, находите реликвии и прокладывайте путь к сердцу живого шпиля.</p><div class="network-actions"><button class="btn primary" onclick="soloSelect()">Соло-поход</button><button id="continueBtn" class="btn" onclick="continueRun()">Продолжить соло</button><button class="btn gold" onclick="createOnlineRoom()">Создать сетевую комнату</button><button class="btn" onclick="joinOnlineRoom()">Войти по коду</button></div><p class="small" style="margin-top:18px">Полноценный одиночный режим · сетевой кооператив через Firebase</p></div><div class="rune-card"><div class="moon"></div><div class="tower"></div><div class="embers"></div></div></div>
+</section>
+<section id="mapScreen" class="screen hidden"><div class="run-grid">
+ <aside class="side-panel"><div class="eyebrow">Ваш отряд</div><div id="partyMini"></div><button class="btn deck-btn gold" onclick="showSkillTree()">✦ Созвездие навыков</button><button class="btn deck-btn" onclick="showDeck()">Посмотреть колоды</button><button class="btn deck-btn" onclick="saveRun();toast('Забег сохранён')">Сохранить</button><button class="btn deck-btn" onclick="leaveToMenu()">В главное меню</button><div class="rule"></div><button class="btn deck-btn" onclick="restartRun()">Новый забег</button></aside>
+ <main class="map-panel"><div class="map-title">Путь сквозь пепел</div><div class="map-sub">выберите доступный узел</div><div id="mapPath" class="map-path"></div></main>
+ <aside class="side-panel"><div class="eyebrow">Знаки шпиля</div><div class="legend"><div><span>⚔</span> Бой</div><div><span>☠</span> Элита</div><div><span>?</span> Событие</div><div><span>♨</span> Привал</div><div><span>◆</span> Хранитель</div><div><span>🛒</span> Рынок</div></div><div class="rule"></div><p class="small"><b style="color:var(--gold)">Совет:</b> броня исчезает в начале нового раунда. Позиции, теги карт и общий Резонанс важнее чистого урона.</p></aside>
+ </div></section>
+<section id="battle" class="hidden"><div class="battle-top"><div class="round-tag" id="roundUI">Раунд 1</div><div><span id="battleName">Бой</span><span id="roomModUI" style="margin-left:10px"></span></div><div style="display:flex;gap:8px"><button class="btn" style="padding:6px 10px" onclick="showDeck()">Колоды</button><button class="btn" style="padding:6px 10px" onclick="leaveToMenu()">Меню</button></div></div><div class="arena"><div class="party" id="battleParty"></div><div class="intent"><div class="intent-box" id="intentUI">Намерение: 8 урона</div><button id="resonanceUI" class="resonance-btn" onclick="showTeamMoves()">Резонанс · 0/10</button></div><div class="enemy-side" id="enemyUI"></div></div><div class="log-shell"><div class="log-toolbar"><span>Журнал</span><button class="active" onclick="setLogFilter('all',this)">Все</button><button onclick="setLogFilter('damage',this)">Урон</button><button onclick="setLogFilter('status',this)">Эффекты</button><button onclick="setLogFilter('system',this)">Система</button></div><div id="combatLog" class="combat-log"></div></div><div class="hand-zone"><div class="turn-info"><div class="energy" id="energyUI">3</div><div class="energy-label">энергия</div><div class="active-player" id="activeUI">Игрок 1</div></div><div class="hand" id="handUI"></div><div><button class="end-turn" onclick="endPlayerTurn()">Завершить ход</button><div class="pile-buttons"><button class="pile-btn" onclick="showPile('draw')">Добор<b id="drawCount">0</b></button><button class="pile-btn discard" onclick="showPile('discard')">Сброс<b id="discardCount">0</b></button><button class="pile-btn exhaust" onclick="showPile('exhaust')">Пепел<b id="exhaustCount">0</b></button></div><div class="pile-info" id="pileUI"></div></div></div></section>
+<div id="modalBack" class="modal-back hidden"><div id="modal" class="modal"></div></div>
+</div>
+<script src="scripts/cards.js"></script>
+<script src="scripts/assets.js"></script>
+<script src="scripts/card-art.generated.js"></script>
+<script src="scripts/content.js"></script>
+<script src="scripts/game.js"></script>
+<script src="scripts/network.js"></script>
+<script src="scripts/ui-audio.js"></script>
+</body></html>
